@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score
+
+# 1. Load your dataset
+file_path = '/content/data (3).csv'  # Update with your actual file path
+df = pd.read_csv(file_path)
+
+# 2. Clean column names (strip spaces)
+df.columns = df.columns.str.strip()
+
+# 3. Drop the 'ID' column as it's not needed for modeling
+df = df.drop('ID', axis=1)
+
+# 4. Split features (X) and target (y)
+X = df.drop('class', axis=1)  # Replace 'class' with the actual target column name
+y = df['class']  # Replace 'class' with the actual target column name
+
+# 5. Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 6. Standardize features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# 7. Initialize and Train Gradient Boosting model
+model = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=3, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# 8. Predict on Test Data
+y_pred = model.predict(X_test_scaled)
+
+# 9. Evaluate the Model
+accuracy = accuracy_score(y_test, y_pred)
+
+# Output the results
+print(f"Test Accuracy: {accuracy:.4f}")
